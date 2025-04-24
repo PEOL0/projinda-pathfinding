@@ -27,7 +27,7 @@ typedef struct grid {
  * @param heightInfo 2D array of height values for terrain elevation
  * @return Pointer to the created grid
  */
-Grid* createGrid(int width, int height, int** heightInfo);
+Grid* createGrid(int width, int height, float** heightInfo);
 
 /**
  * @brief Free a grid and all associated memory
