@@ -4,6 +4,7 @@
 typedef struct node {
     int y;
     int x;
+    float z;
     struct node* before;
     float costFromStart;
     float estimatedCostToTarget;
