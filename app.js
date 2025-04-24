@@ -39,3 +39,22 @@ if (bg) {
 //document.body.textContent = area ? `Welcome to ${area}` : "No area selected";*/
 
 
+const klickArea = document.getElementById('klickArea');
+
+klickArea.addEventListener('click', function(event) {
+    const rect = klickArea.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    console.log(`Klick på x: ${x}, y: ${y}`);
+
+    // Skapa en liten markör där man klickar
+    const marker = document.createElement('div');
+    marker.className = 'marker';
+    marker.style.left = x + 'px';
+    marker.style.top = y + 'px';
+    klickArea.appendChild(marker);
+    // GÖR ATT MAN BARA KAN SKAPA 2 PUNKTER
+});
+
+
