@@ -2,6 +2,12 @@
 #include <stdlib.h>
 #include <float.h>
 
+/**
+ * Creates a 2D grid for pathfinding with specified dimensions.
+ * Allocates memory for the grid structure and all cells.
+ * Initializes each cell with coordinates, height (if provided), 
+ * and default pathfinding values. Returns NULL if memory allocation fails.
+ */
 Grid* createGrid(int width, int height, float** heightInfo) {
     Grid* grid = (Grid*)malloc(sizeof(Grid));
     if (!grid) {
