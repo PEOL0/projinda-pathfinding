@@ -6,8 +6,12 @@ function createMap() {
       const encodedArea = encodeURIComponent(selectedArea);
       window.location.href = `karta.html?area=${encodedArea}`;
     } else {
-      alert('Please select an area first!');
+      alert('Du har inte valt ett område!');
     }
+}
+
+function backButton() {
+    window.location.href = `index.html`;
 }
 
 
@@ -21,7 +25,7 @@ const area = getQueryParam("area");
 
 // Backgrounds - can be colors or image URLs
 const backgrounds = {
-    "SKOG nr 1": "url('assets/path_1264748.png')"
+    "SKOG nr 1": "url('assets/bergaKarta.png')"
 }
 
 const bg = backgrounds[area];
