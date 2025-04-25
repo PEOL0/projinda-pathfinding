@@ -49,3 +49,22 @@ Grid* createGrid(int width, int height, float** heightInfo) {
     
     return grid;
 }
+
+/**
+ * Frees all memory associated with a grid including all cell rows
+ * and the grid structure itself.
+ */
+void freeGrid(Grid* grid) {
+    if (!grid) return;  
+    
+    if (grid->cells) {  
+        for (int y = 0; y < grid->height; y++) {
+            if (grid->cells[y]) {
+                free(grid->cells[y]);  
+            }
+        }
+        free(grid->cells);
+    }
+    
+    free(grid);
+}
