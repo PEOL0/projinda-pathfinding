@@ -83,6 +83,18 @@ void setImpassable(Grid* grid, int x, int y, int value) {
 }
 
 /**
+ * Returns a pointer to the node at specified coordinates.
+ * Returns NULL if coordinates are invalid or grid is NULL.
+ */
+Node* getNode(Grid* grid, int x, int y) {
+    if (!grid || !isValid(grid, x, y)) {
+        return NULL;
+    }
+    
+    return &(grid->cells[y][x]);
+}
+
+/**
  * Checks if the given coordinates are within the grid boundaries.
  */
 int isValid(Grid* grid, int x, int y) {
