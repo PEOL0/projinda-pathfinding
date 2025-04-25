@@ -17,16 +17,16 @@ Grid* createGrid(int width, int height, float** heightInfo) {
     grid->width = width;
     grid->height = height;
     
-    grid->cells = (Node**)malloc(height * sizeof(Node*));
+    grid->cells = (Node**)malloc(width * sizeof(Node*));
     if (!grid->cells) {
         free(grid);
         return NULL;
     }
     
-    for (int y = 0; y < height; y++) {
-        grid->cells[y] = (Node*)malloc(width * sizeof(Node));
-        if (!grid->cells[y]) {
-            for (int i = 0; i < y; i++) {
+    for (int x = 0; x < width; x++) {
+        grid->cells[x] = (Node*)malloc(height * sizeof(Node));
+        if (!grid->cells[x]) {
+            for (int i = 0; i < x; i++) {
                 free(grid->cells[i]);
             }
             free(grid->cells);
@@ -34,16 +34,16 @@ Grid* createGrid(int width, int height, float** heightInfo) {
             return NULL;
         }
         
-        for (int x = 0; x < width; x++) {
-            grid->cells[y][x].x = x;
-            grid->cells[y][x].y = y;
-            grid->cells[y][x].z = heightInfo ? heightInfo[y][x] : 0.0f;
-            grid->cells[y][x].before = NULL;
-            grid->cells[y][x].costFromStart = FLT_MAX;
-            grid->cells[y][x].estimatedCostToTarget = FLT_MAX;
-            grid->cells[y][x].totalCost = FLT_MAX;
-            grid->cells[y][x].visited = 0;
-            grid->cells[y][x].impassable = 0;
+        for (int y = 0; y < height; y++) {
+            grid->cells[x][y].x = x;
+            grid->cells[x][y].y = y;
+            grid->cells[x][y].z = heightInfo ? heightInfo[x][y] : 0.0f;
+            grid->cells[x][y].before = NULL;
+            grid->cells[x][y].costFromStart = FLT_MAX;
+            grid->cells[x][y].estimatedCostToTarget = FLT_MAX;
+            grid->cells[x][y].totalCost = FLT_MAX;
+            grid->cells[x][y].visited = 0;
+            grid->cells[x][y].impassable = 0;
         }
     }
     
@@ -58,9 +58,9 @@ void freeGrid(Grid* grid) {
     if (!grid) return;  
     
     if (grid->cells) {  
-        for (int y = 0; y < grid->height; y++) {
-            if (grid->cells[y]) {
-                free(grid->cells[y]);  
+        for (int x = 0; x < grid->width; x++) {
+            if (grid->cells[x]) {
+                free(grid->cells[x]);  
             }
         }
         free(grid->cells);
@@ -79,7 +79,7 @@ void setImpassable(Grid* grid, int x, int y, int value) {
         return;
     }
       
-    grid->cells[y][x].impassable = value;
+    grid->cells[x][y].impassable = value;
 }
 
 /**
@@ -91,7 +91,7 @@ Node* getNode(Grid* grid, int x, int y) {
         return NULL;
     }
     
-    return &(grid->cells[y][x]);
+    return &(grid->cells[x][y]);
 }
 
 /**
@@ -118,13 +118,13 @@ void resetGrid(Grid* grid) {
         return;
     }
     
-    for (int y = 0; y < grid->height; y++) {
-        for (int x = 0; x < grid->width; x++) {
-            grid->cells[y][x].before = NULL;
-            grid->cells[y][x].costFromStart = FLT_MAX;
-            grid->cells[y][x].estimatedCostToTarget = FLT_MAX;
-            grid->cells[y][x].totalCost = FLT_MAX;
-            grid->cells[y][x].visited = 0;
+    for (int x = 0; x < grid->width; x++) {
+        for (int y = 0; y < grid->height; y++) {
+            grid->cells[x][y].before = NULL;
+            grid->cells[x][y].costFromStart = FLT_MAX;
+            grid->cells[x][y].estimatedCostToTarget = FLT_MAX;
+            grid->cells[x][y].totalCost = FLT_MAX;
+            grid->cells[x][y].visited = 0;
         }
     }
 }
