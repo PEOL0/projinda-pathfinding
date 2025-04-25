@@ -108,3 +108,23 @@ int isValid(Grid* grid, int x, int y) {
         return 0;
     }
 }
+
+/**
+ * Resets all pathfinding-related values in the grid to prepare for a new search.
+ * Preserves grid structure, coordinates, and impassable status of cells.
+ */
+void resetGrid(Grid* grid) {
+    if (!grid) {
+        return;
+    }
+    
+    for (int y = 0; y < grid->height; y++) {
+        for (int x = 0; x < grid->width; x++) {
+            grid->cells[y][x].before = NULL;
+            grid->cells[y][x].costFromStart = FLT_MAX;
+            grid->cells[y][x].estimatedCostToTarget = FLT_MAX;
+            grid->cells[y][x].totalCost = FLT_MAX;
+            grid->cells[y][x].visited = 0;
+        }
+    }
+}
