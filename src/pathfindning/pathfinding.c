@@ -68,3 +68,31 @@ void freeGrid(Grid* grid) {
     
     free(grid);
 }
+
+/**
+ * Sets a cell as passable or impassable.
+ * Safely checks grid and coordinates validity before making changes.
+ */
+void setImpassable(Grid* grid, int x, int y, int value) {
+    
+    if (!grid || !isValid(grid, x, y)) {
+        return;
+    }
+      
+    grid->cells[y][x].impassable = value;
+}
+
+/**
+ * Checks if the given coordinates are within the grid boundaries.
+ */
+int isValid(Grid* grid, int x, int y) {
+    if (!grid) {
+        return 0;
+    }
+    
+    if (x >= 0 && x < grid->width && y >= 0 && y < grid->height) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
