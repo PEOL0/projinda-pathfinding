@@ -94,7 +94,7 @@ Node** reconstructPath(Node* targetNode);
 /**
  * @brief Get the length of a path
  * @param path The path to measure
- * @return The number of nodes in the path
+ * @return The lenght of the path
  */
 int getPathLength(Node** path);
 
