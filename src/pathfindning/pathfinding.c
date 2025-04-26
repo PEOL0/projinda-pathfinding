@@ -197,6 +197,51 @@ Node** reconstructPath(Node* targetNode) {
     return path;
 }
 
+/**
+ * Implements the A* algorithm to find the shortest path between two points.
+ * Returns a NULL-terminated array of nodes or NULL if no path exists.
+ */
+Node** findPath(Grid* grid, int startX, int startY, int targetX, int targetY) {
+    if (!grid) {
+        return NULL;
+    }
+
+    if (startX == targetX && startY == targetY) {
+        return NULL;
+    }
+
+    Node* target = getNode(grid, targetX, targetY);
+    Node* current = getNode(grid, startX, startY);
+    
+    if (!target || !current || target->impassable || current->impassable) {
+        return NULL;
+    }
+    
+    resetGrid(grid);
+    
+    current->costFromStart = 0;
+    current->estimatedCostToTarget = calculateEstimatedCost(startX, startY, targetX, targetY);
+    current->totalCost = current->estimatedCostToTarget;
+    
+    while (current != target) {
+        current->visited = 1;
+        
+        processNeighbors(grid, current, target);
+        
+        current = getLowestCostNode(grid);
+        
+        if (!current) {
+            return NULL;
+        }
+    }
+    
+    return reconstructPath(target);
+}
+
+/**
+ * Calculates the path length, considering diagonal vs orthogonal movements.
+ * Returns the sum of movement costs (1.0 for orthogonal, 1.414 for diagonal).
+ */
 int getPathLength(Node** path) {
     if (!path || !path[0]) {
         return 0;
