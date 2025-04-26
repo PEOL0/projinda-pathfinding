@@ -86,9 +86,9 @@ void setImpassable(Grid* grid, int x, int y, int value) {
  * Calculates the estimated cost (heuristic) between two points using diagonal distance.
  * Returns a float representing the diagonal distance between the points.
  */
-float calculateEstimatedCost(int x1, int y1, int x2, int y2) {
-    int dx = abs(x1 - x2);
-    int dy = abs(y1 - y2);
+float calculateEstimatedCost(int startX, int startY, int targetX, int targetY) {
+    int dx = abs(startX - targetX);
+    int dy = abs(startY - targetY);
     
     return (float)(dx > dy ? dx : dy);
 }

@@ -59,13 +59,13 @@ Node** findPath(Grid* grid, int startX, int startY, int targetX, int targetY);
 
 /**
  * @brief Calculate the heuristic distance/estimated cost between two points
- * @param x1 X coordinate of the first point
- * @param y1 Y coordinate of the first point
- * @param x2 X coordinate of the second point
- * @param y2 Y coordinate of the second point
+ * @param startX X coordinate of the first point
+ * @param startY Y coordinate of the first point
+ * @param targetX X coordinate of the second point
+ * @param targetY Y coordinate of the second point
  * @return The estimated cost between the points
  */
-float calculateEstimatedCost(int x1, int y1, int x2, int y2);
+float calculateEstimatedCost(int startX, int startY, int targetX, int targetY);
 
 /**
  * @brief Find the unvisited node with the lowest total cost
