@@ -166,6 +166,38 @@ void processNeighbors(Grid* grid, Node* current, Node* target) {
 }
 
 /**
+ * Reconstructs the complete path from start to target by walking backwards through the linked nodes starting from the target node.
+ * Returns a NULL-terminated array of Node pointers representing the path.
+ */
+Node** reconstructPath(Node* targetNode) {
+    if (!targetNode) {
+        return NULL;
+    }
+    
+    int length = 1;
+    Node* current = targetNode;
+    while (current->before) {
+        length++;
+        current = current->before;
+    }
+    
+    Node** path = (Node**)malloc(sizeof(Node*) * (length + 1));
+    if (!path) {
+        return NULL;
+    }
+    
+
+    current = targetNode;
+    for (int i = length - 1; i >= 0; i--) {
+        path[i] = current;
+        current = current->before;
+    }
+    path[length] = NULL;
+    
+    return path;
+}
+
+/**
  * Returns a pointer to the node at specified coordinates.
  * Returns NULL if coordinates are invalid or grid is NULL.
  */
