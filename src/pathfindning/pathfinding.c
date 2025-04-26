@@ -214,6 +214,7 @@ int getPathLength(Node** path) {
         }
     }
     
+    return distance;
 }
 
 /**
