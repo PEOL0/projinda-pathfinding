@@ -198,6 +198,16 @@ Node** reconstructPath(Node* targetNode) {
 }
 
 /**
+ * Frees memory allocated for a path array.
+ * Safely handles NULL paths
+ */
+void freePath(Node** path) {
+    if (path) {
+        free(path);
+    }
+}
+
+/**
  * Returns a pointer to the node at specified coordinates.
  * Returns NULL if coordinates are invalid or grid is NULL.
  */
