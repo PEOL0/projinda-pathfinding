@@ -94,6 +94,32 @@ float calculateEstimatedCost(int startX, int startY, int targetX, int targetY) {
 }
 
 /**
+ * Finds the unvisited node with the lowest total cost in the grid.
+ * Used by pathfinding algorithms to determine the next node to explore.
+ */
+Node* getLowestCostNode(Grid* grid) {
+    if (!grid) {
+        return NULL;
+    }
+    
+    Node* lowestCostNode = NULL;
+    float lowestCost = FLT_MAX;
+    
+    for (int x = 0; x < grid->width; x++) {
+        for (int y = 0; y < grid->height; y++) {
+            Node* currentNode = &grid->cells[x][y];
+            if (!currentNode->visited && !currentNode->impassable && 
+                currentNode->totalCost < lowestCost) {
+                lowestCost = currentNode->totalCost;
+                lowestCostNode = currentNode;
+            }
+        }
+    }
+    
+    return lowestCostNode;
+}
+
+/**
  * Processes all valid neighboring nodes of the current node during pathfinding.
  * Updates cost values and path connections for neighbors if a better path is found.
  */
