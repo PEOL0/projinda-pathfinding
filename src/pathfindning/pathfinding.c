@@ -94,6 +94,52 @@ float calculateEstimatedCost(int x1, int y1, int x2, int y2) {
 }
 
 /**
+ * Processes all valid neighboring nodes of the current node during pathfinding.
+ * Updates cost values and path connections for neighbors if a better path is found.
+ */
+void processNeighbors(Grid* grid, Node* current, Node* target) {
+    if (!grid || !current || !target) {
+        return;
+    }
+    
+    int dx[] = {-1, 0, 1, -1, 1, -1, 0, 1};
+    int dy[] = {-1, -1, -1, 0, 0, 1, 1, 1};
+    
+    for (int i = 0; i < 8; i++) {
+        int newX = current->x + dx[i];
+        int newY = current->y + dy[i];
+        
+        if (!isValid(grid, newX, newY)) {
+            continue;
+        }
+        
+        Node* neighbor = getNode(grid, newX, newY);
+        if (!neighbor || neighbor->impassable || neighbor->visited) {
+            continue;
+        }
+        
+        
+        float moveCost = (dx[i] != 0 && dy[i] != 0) ? 1.414f : 1.0f;
+        
+        
+        if (neighbor->z != current->z) {
+            moveCost += fabsf(neighbor->z - current->z) * 0.5f;
+        }
+        
+        float newCostFromStart = current->costFromStart + moveCost;
+        
+        if (newCostFromStart < neighbor->costFromStart) {
+            neighbor->before = current;
+            neighbor->costFromStart = newCostFromStart;
+            neighbor->estimatedCostToTarget = calculateEstimatedCost(
+                neighbor->x, neighbor->y, target->x, target->y
+            );
+            neighbor->totalCost = neighbor->costFromStart + neighbor->estimatedCostToTarget;
+        }
+    }
+}
+
+/**
  * Returns a pointer to the node at specified coordinates.
  * Returns NULL if coordinates are invalid or grid is NULL.
  */
