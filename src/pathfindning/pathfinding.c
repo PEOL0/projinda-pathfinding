@@ -197,6 +197,10 @@ Node** reconstructPath(Node* targetNode) {
     return path;
 }
 
+int getPathLength(Node** path) {
+    
+}
+
 /**
  * Frees memory allocated for a path array.
  * Safely handles NULL paths
