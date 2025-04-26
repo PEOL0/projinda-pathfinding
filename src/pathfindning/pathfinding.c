@@ -198,6 +198,21 @@ Node** reconstructPath(Node* targetNode) {
 }
 
 int getPathLength(Node** path) {
+    if (!path || !path[0]) {
+        return 0;
+    }
+    
+    int distance = 0;
+    for (int i = 0; path[i] != NULL && path[i+1] != NULL; i++) {
+        Node* current = path[i];
+        Node* next = path[i+1];
+        
+        if (abs(current->x - next->x) > 0 && abs(current->y - next->y) > 0) {
+            distance += 1.414;
+        } else {
+            distance += 1;
+        }
+    }
     
 }
 
