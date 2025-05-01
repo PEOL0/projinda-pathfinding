@@ -146,7 +146,7 @@ void processNeighbors(Grid* grid, Node* current, Node* target) {
         }
         
         
-        float moveCost = (dx[i] != 0 && dy[i] != 0) ? 1.414f : 1.0f;
+        float moveCost = (dx[i] != 0 && dy[i] != 0) ? DIAGONAL_COST : 1.0f;
         
         
         if (neighbor->z != current->z) {
@@ -254,7 +254,7 @@ int getPathLength(Node** path) {
         Node* next = path[i+1];
         
         if (abs(current->x - next->x) > 0 && abs(current->y - next->y) > 0) {
-            distance += 1.414;
+            distance += DIAGONAL_COST;
         } else {
             distance += 1;
         }

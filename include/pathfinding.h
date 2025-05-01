@@ -1,6 +1,8 @@
 #ifndef PATHFINDING_H
 #define PATHFINDING_H
 
+#define DIAGONAL_COST 1.414f
+
 typedef struct node {
     int y;
     int x;

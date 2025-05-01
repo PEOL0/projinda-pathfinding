@@ -347,7 +347,7 @@ void test_getPathLength(void) {
     
     int length = getPathLength(path);
     
-    CU_ASSERT_EQUAL(length, (int)(2*1.414 + 2));
+    CU_ASSERT_EQUAL(length, (int)(2*DIAGONAL_COST + 2));
     
     CU_ASSERT_EQUAL(getPathLength(NULL), 0);
 }
