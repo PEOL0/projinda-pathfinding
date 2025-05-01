@@ -243,12 +243,12 @@ Node** findPath(Grid* grid, int startX, int startY, int targetX, int targetY) {
  * Calculates the path length, considering diagonal vs orthogonal movements.
  * Returns the sum of movement costs (1.0 for orthogonal, 1.414 for diagonal).
  */
-int getPathLength(Node** path) {
+float getPathLength(Node** path) {
     if (!path || !path[0]) {
         return 0;
     }
     
-    int distance = 0;
+    float distance = 0;
     for (int i = 0; path[i] != NULL && path[i+1] != NULL; i++) {
         Node* current = path[i];
         Node* next = path[i+1];
@@ -256,7 +256,7 @@ int getPathLength(Node** path) {
         if (abs(current->x - next->x) > 0 && abs(current->y - next->y) > 0) {
             distance += DIAGONAL_COST;
         } else {
-            distance += 1;
+            distance += 1.0f;
         }
     }
     
