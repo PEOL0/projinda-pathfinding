@@ -1,6 +1,7 @@
-#include "pathfinding.h"
+#include "../../include/pathfinding.h"
 #include <stdlib.h>
 #include <float.h>
+#include <math.h>
 
 /**
  * Creates a 2D grid for pathfinding with specified dimensions.
