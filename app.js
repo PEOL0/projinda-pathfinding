@@ -40,6 +40,9 @@ if (bg) {
 
 
 const klickArea = document.getElementById('klickArea');
+const start = [0, 0];
+const slut = [0, 0];
+
 
 klickArea.addEventListener('click', function(event) {
     const rect = klickArea.getBoundingClientRect();
@@ -53,8 +56,28 @@ klickArea.addEventListener('click', function(event) {
     marker.className = 'marker';
     marker.style.left = x + 'px';
     marker.style.top = y + 'px';
-    klickArea.appendChild(marker);
-    // GÖR ATT MAN BARA KAN SKAPA 2 PUNKTER
+    if (klickArea.childElementCount <=1) {
+        klickArea.appendChild(marker);
+        start[0] = x;
+        start[1] = y;
+    } else if (klickArea.childElementCount <=2) {
+        klickArea.appendChild(marker);
+        slut[0] = x;
+        slut[1] = y;
+    }
+    console.log(start[0], start[1], slut[0], slut[1]);
 });
 
+function createRoute() {
+    // Skicka koordiinater till Algoritm
+    console.log(`KLICKAT PÅ CREATE ROTE KNAPP ${start}, ${slut}`);
+}
 
+function rita(x, y) {
+    const markerVag = document.createElement('div');
+    markerVag.className = 'markerVag';
+    markerVag.style.left = x + 'px';
+    markerVag.style.top = y + 'px';
+    klickArea.appendChild(marker);
+
+}
