@@ -70,7 +70,7 @@ klickArea.addEventListener('click', function(event) {
 
 function createRoute() {
     // Skicka koordiinater till Algoritm
-    console.log(`KLICKAT PÅ CREATE ROTE KNAPP ${start}, ${slut}`);
+    console.log(`KLICKAT PÅ CREATE ROTE KNAPP ${start},${slut}`);
 }
 
 function rita(x, y) {
