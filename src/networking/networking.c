@@ -2,8 +2,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
-#include <ws.h>
+#include <wsserver/ws.h>
 #include "pathfinding.h"
 #include "heightinfo.h"
 
@@ -65,7 +66,7 @@ void onmessage(ws_cli_conn_t client,
                 sprintf(nodeStr, "%d,%d;", path[i]->x, path[i]->y);
                 strcat(response, nodeStr);
             }
-                        
+
             ws_sendframe_txt(client, response);
             
             free(response);
@@ -108,3 +109,7 @@ int serverLoop(void)
     return (0);
 }
 
+int main() {
+    serverLoop();
+    return 0;
+}
