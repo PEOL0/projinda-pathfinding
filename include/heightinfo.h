@@ -1,20 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+const int listgorareCols = 1450;
+const int listgorareRows = 740;
+
 float** listgorare() {
-    int cols = 1450;
-    int rows = 740;
 
 
-    float **heightinfo = (float **)malloc(cols * sizeof(float *));
+    float **heightinfo = (float **)malloc(listgorareCols * sizeof(float *));
     if (heightinfo == NULL) {
         printf("Något gick snett i minnesallokeringen :(\n");
         return NULL;
     }
 
     // listY koordinater 
-    for (int i = 0; i < cols; i++) {
-        heightinfo[i] = (float *)malloc(rows * sizeof(float));
+    for (int i = 0; i < listgorareCols; i++) {
+        heightinfo[i] = (float *)malloc(listgorareRows * sizeof(float));
         if (heightinfo == NULL) {
             printf("Något gick snett i minnesallokeringen :(\n");
             return NULL;
@@ -22,13 +23,13 @@ float** listgorare() {
     }
 
     // INitalize hela grid med 0 
-    for (int i = 0; i < cols; i++) {
-        for (int j = 0; j < rows; j++) {
+    for (int i = 0; i < listgorareCols; i++) {
+        for (int j = 0; j < listgorareRows; j++) {
             heightinfo[i][j] = 0;
         }
     }
 
-    /*for (int i = 0; i < rows; i++) {
+    /*for (int i = 0; i < listgorareRows; i++) {
         free(heightinfo[i]);
     }
     //free(heightinfo);*/
