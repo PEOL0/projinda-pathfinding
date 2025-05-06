@@ -83,7 +83,7 @@ float calculateEstimatedCost(int startX, int startY, int targetX, int targetY);
 /**
  * @brief Find the unvisited node with the lowest total cost
  * @param grid The grid to search in
- * @param processedNeighbourList List of neighbor nodes to be connsidered when geting the one with lowest cost
+ * @param processedNeighbourList List of neighbor nodes to be considered when getting the one with lowest cost
  * @return The lowest cost unvisited node, or NULL if none found
  */
 Node* getLowestCostNode(Grid* grid, NeighbourList* processedNeighbourList);
