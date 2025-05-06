@@ -1,4 +1,5 @@
 console.log("JS scriptad");
+const socket = new WebSocket('ws://localhost:8080');
 
 function createMap() {
     const selectedArea = document.getElementById('areaSelect').value;
@@ -71,6 +72,8 @@ klickArea.addEventListener('click', function(event) {
 function createRoute() {
     // Skicka koordiinater till Algoritm
     console.log(`KLICKAT PÅ CREATE ROTE KNAPP ${start},${slut}`);
+    let message = Math.round(start[0]/2)+","+Math.round(start[1]/2)+ ","+ Math.round(slut[0]/2) + "," + Math.round(slut[1]/2);
+    socket.send(message);
 }
 
 function rita(x, y) {
@@ -78,6 +81,33 @@ function rita(x, y) {
     markerVag.className = 'markerVag';
     markerVag.style.left = x + 'px';
     markerVag.style.top = y + 'px';
-    klickArea.appendChild(marker);
+    klickArea.appendChild(markerVag);
 
+}
+
+socket.onopen = function () {
+    console.log("Socket connected");
+}
+
+function processAndDraw(input) {
+    let points = input.split(";"); 
+  
+    while (points.length > 0) {
+        let pair = points.shift(); 
+        if (!pair) continue;
+  
+        let [xStr, yStr] = pair.split(","); 
+        let x = parseFloat(xStr);
+        let y = parseFloat(yStr);
+  
+        if (!isNaN(x) && !isNaN(y)) {
+            rita(2*x, 2*y);
+        }
+    }
+  }
+  
+
+socket.onmessage = function (message) {
+    console.log(message);
+    processAndDraw(message.data);
 }

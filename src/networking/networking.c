@@ -2,8 +2,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
-#include <ws.h>
+#include <wsserver/ws.h>
+#include "pathfinding.h"
+#include "heightinfo.h"
 
 /**
  * @brief This function is called whenever a new connection is opened.
@@ -42,10 +45,41 @@ void onmessage(ws_cli_conn_t client,
     printf("I receive a message: %s (%zu), from: %s\n", msg,
         size, cli);
 
-    sleep(2);
-    ws_sendframe_txt(client, "hello");
-    sleep(2);
-    ws_sendframe_txt(client, "world");
+    int startX, startY, targetX, targetY;
+    if (sscanf((const char*)msg, "%d,%d,%d,%d", &startX, &startY, &targetX, &targetY) == 4) {
+        printf("Received coordinates: start(%d,%d) target(%d,%d)\n", startX, startY, targetX, targetY);
+        
+        Grid* grid = createGrid(listgorareCols, listgorareRows, listgorare());
+        printf("Created grid");
+        Node** path = findPath(grid, startX, startY, targetX, targetY);
+        printf("Created foundPath done");
+        if (path != NULL) {
+            int pathLength = 0;
+            while (path[pathLength] != NULL) {
+                pathLength++;
+            }
+
+            char* response = (char*)malloc(pathLength * 20);
+            response[0] = '\0';
+            
+            for (int i = 0; i < pathLength; i++) {
+                char nodeStr[20];
+                sprintf(nodeStr, "%d,%d;", path[i]->x, path[i]->y);
+                strcat(response, nodeStr);
+            }
+
+            ws_sendframe_txt(client, response);
+            
+            free(response);
+            freePath(path);
+        } else {
+            ws_sendframe_txt(client, "No path found");
+        }
+
+        freeGrid(grid);
+    } else {
+        ws_sendframe_txt(client, "Error: Message format should be 'startX,startY,targetX,targetY'");
+    }
 }
 
 int serverLoop(void)
@@ -76,3 +110,7 @@ int serverLoop(void)
     return (0);
 }
 
+int main() {
+    serverLoop();
+    return 0;
+}
