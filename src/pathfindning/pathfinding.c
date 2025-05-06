@@ -298,7 +298,7 @@ Node** findPath(Grid* grid, int startX, int startY, int targetX, int targetY) {
     Node* target = getNode(grid, targetX, targetY);
     Node* current = getNode(grid, startX, startY);
     
-    if (!target || !current || target->impassable || current->impassable) {
+    if (!target || !current || target->impassable || current->impassable || !isValid(grid,startX,startY) || !isValid(grid,targetX,targetY)) {
         return NULL;
     }
     
