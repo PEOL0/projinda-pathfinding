@@ -89,6 +89,18 @@ Node* getLowestCostNode(Grid* grid);
  */
 void processNeighbors(Grid* grid, Node* current, Node* target);
 
+/**
+ * @brief Create a new empty linkedlist for storing neighboring nodes
+ * @return Pointer to the created neighbor list
+ */
+NeighbourList* createNeighbourList();
+
+/**
+ * @brief Free a neighbor list and all associated memory
+ * @param neighbourList The neighbor list to free
+ */
+void freeNeighbourList(NeighbourList* neighbourList);
+
 /* ----- Path handling functions ----- */
 
 /**
