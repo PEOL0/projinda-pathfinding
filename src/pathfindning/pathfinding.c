@@ -179,6 +179,58 @@ NeighbourList* createNeighbourList() {
     return neighbourList;
 }
 
+void addNeighbour(NeighbourList* neighbourList, Node* node) {
+    if (!neighbourList || !node) {
+        return;
+    }
+    
+    NeighbourListNode* newNode = (NeighbourListNode*)malloc(sizeof(NeighbourListNode));
+    if (!newNode) {
+        return;
+    }
+    
+    newNode->curentNode = node;
+    newNode->nextNode = NULL;
+    
+    if (!neighbourList->startNode) {
+        neighbourList->startNode = newNode;
+        neighbourList->endNode = newNode;
+    } else {
+        neighbourList->endNode->nextNode = newNode;
+        neighbourList->endNode = newNode;
+    }
+}
+
+void removeNeighbour(NeighbourList* neighbourList, Node* node) {
+    if (!neighbourList || !node || !neighbourList->startNode) {
+        return;
+    }
+    
+    NeighbourListNode* current = neighbourList->startNode;
+    NeighbourListNode* previous = NULL;
+    
+    while (current != NULL) {
+        if (current->curentNode != node) {
+            previous = current;
+            current = current->nextNode;
+            continue;
+        }
+        
+        if (previous == NULL) {
+            neighbourList->startNode = current->nextNode;
+        } else {
+            previous->nextNode = current->nextNode;
+        }
+        
+        if (neighbourList->endNode == current) {
+            neighbourList->endNode = previous;
+        }
+        
+        free(current);
+        return;
+    }
+}
+
 void freeNeighbourList(NeighbourList* neighbourList) {
     if (!neighbourList) {
         return;
