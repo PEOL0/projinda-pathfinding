@@ -23,6 +23,11 @@ typedef struct grid {
 typedef struct neighbourListNode {
     Node* curentNode;
     struct neighbourListNode* nextNode;
+} NeighbourListNode;
+
+typedef struct neighbourList {
+    NeighbourListNode* startNode;
+    NeighbourListNode* endNode;
 } NeighbourList;
 
 /* ----- Grid management functions ----- */
@@ -94,6 +99,20 @@ void processNeighbors(Grid* grid, Node* current, Node* target);
  * @return Pointer to the created neighbor list
  */
 NeighbourList* createNeighbourList();
+
+/**
+ * @brief Add a node to the neighbor list
+ * @param NeighbourList The list to add the node to
+ * @param node The node to add to the list
+ */
+void addNeighbour(NeighbourList* NeighbourList, Node* node);
+
+/**
+ * @brief Remove a node from the neighbor list
+ * @param NeighbourList The list to remove the node from
+ * @param node The node to remove from the list
+ */
+void removeNeighbour(NeighbourList* NeighbourList, Node* node);
 
 /**
  * @brief Free a neighbor list and all associated memory
