@@ -45,6 +45,7 @@ Grid* createGrid(int width, int height, float** heightInfo) {
             grid->cells[x][y].totalCost = FLT_MAX;
             grid->cells[x][y].visited = 0;
             grid->cells[x][y].impassable = 0;
+            grid->cells[x][y].processed = 0;
         }
     }
     
@@ -95,26 +96,26 @@ float calculateEstimatedCost(int startX, int startY, int targetX, int targetY) {
 }
 
 /**
- * Finds the unvisited node with the lowest total cost in the grid.
+ * Finds the unvisited node with the lowest total cost in the processedNodeList.
  * Used by pathfinding algorithms to determine the next node to explore.
  */
-Node* getLowestCostNode(Grid* grid) {
-    if (!grid) {
+Node* getLowestCostNode(Grid* grid, NeighbourList* processedNeighbourList) {
+    if (!grid || !processedNeighbourList || !processedNeighbourList->startNode) {
         return NULL;
     }
     
     Node* lowestCostNode = NULL;
     float lowestCost = FLT_MAX;
     
-    for (int x = 0; x < grid->width; x++) {
-        for (int y = 0; y < grid->height; y++) {
-            Node* currentNode = &grid->cells[x][y];
-            if (!currentNode->visited && !currentNode->impassable && 
-                currentNode->totalCost < lowestCost) {
-                lowestCost = currentNode->totalCost;
-                lowestCostNode = currentNode;
-            }
+    NeighbourListNode* current = processedNeighbourList->startNode;
+    
+    while (current != NULL) {
+        Node* node = current->curentNode;
+        if (!node->visited && !node->impassable && node->totalCost < lowestCost) {
+            lowestCost = node->totalCost;
+            lowestCostNode = node;
         }
+        current = current->nextNode;
     }
     
     return lowestCostNode;
@@ -124,7 +125,7 @@ Node* getLowestCostNode(Grid* grid) {
  * Processes all valid neighboring nodes of the current node during pathfinding.
  * Updates cost values and path connections for neighbors if a better path is found.
  */
-void processNeighbors(Grid* grid, Node* current, Node* target) {
+void processNeighbors(Grid* grid, Node* current, Node* target, NeighbourList* processedNeighbourList) {
     if (!grid || !current || !target) {
         return;
     }
@@ -163,7 +164,92 @@ void processNeighbors(Grid* grid, Node* current, Node* target) {
             );
             neighbor->totalCost = neighbor->costFromStart + neighbor->estimatedCostToTarget;
         }
+        
+        addNeighbour(processedNeighbourList, neighbor);
     }
+}
+
+NeighbourList* createNeighbourList() {
+    NeighbourList* neighbourList = (NeighbourList*)malloc(sizeof(NeighbourList));
+    
+    if (!neighbourList) {
+        return NULL;
+    }
+
+    neighbourList->startNode = NULL;
+    neighbourList->endNode = NULL;
+    
+    return neighbourList;
+}
+
+void addNeighbour(NeighbourList* neighbourList, Node* node) {
+    if (!neighbourList || !node || node->processed) {
+        return;
+    }
+    
+    NeighbourListNode* newNode = (NeighbourListNode*)malloc(sizeof(NeighbourListNode));
+    if (!newNode) {
+        return;
+    }
+    
+    newNode->curentNode = node;
+    newNode->nextNode = NULL;
+    
+    if (!neighbourList->startNode) {
+        neighbourList->startNode = newNode;
+        neighbourList->endNode = newNode;
+    } else {
+        neighbourList->endNode->nextNode = newNode;
+        neighbourList->endNode = newNode;
+    }
+    node->processed = 1;
+}
+
+void removeNeighbour(NeighbourList* neighbourList, Node* node) {
+    if (!neighbourList || !node || !neighbourList->startNode) {
+        return;
+    }
+    
+    NeighbourListNode* current = neighbourList->startNode;
+    NeighbourListNode* previous = NULL;
+    
+    while (current != NULL) {
+        if (current->curentNode != node) {
+            previous = current;
+            current = current->nextNode;
+            continue;
+        }
+        
+        if (previous == NULL) {
+            neighbourList->startNode = current->nextNode;
+        } else {
+            previous->nextNode = current->nextNode;
+        }
+        
+        if (neighbourList->endNode == current) {
+            neighbourList->endNode = previous;
+        }
+        
+        free(current);
+        return;
+    }
+}
+
+void freeNeighbourList(NeighbourList* neighbourList) {
+    if (!neighbourList) {
+        return;
+    }
+
+    NeighbourListNode* current = neighbourList->startNode;
+    NeighbourListNode* next;
+
+    while (current != NULL) {
+        next = current->nextNode;
+        free(current);
+        current = next;
+    }
+    
+    free(neighbourList);
 }
 
 /**
@@ -214,7 +300,7 @@ Node** findPath(Grid* grid, int startX, int startY, int targetX, int targetY) {
     Node* target = getNode(grid, targetX, targetY);
     Node* current = getNode(grid, startX, startY);
     
-    if (!target || !current || target->impassable || current->impassable) {
+    if (!target || !current || target->impassable || current->impassable || !isValid(grid,startX,startY) || !isValid(grid,targetX,targetY)) {
         return NULL;
     }
     
@@ -224,18 +310,27 @@ Node** findPath(Grid* grid, int startX, int startY, int targetX, int targetY) {
     current->estimatedCostToTarget = calculateEstimatedCost(startX, startY, targetX, targetY);
     current->totalCost = current->estimatedCostToTarget;
     
+    NeighbourList* processedNeighbourList = createNeighbourList();
+    if (!processedNeighbourList) {
+        return NULL;
+    }
+
     while (current != target) {
         current->visited = 1;
         
-        processNeighbors(grid, current, target);
+        processNeighbors(grid, current, target, processedNeighbourList);
         
-        current = getLowestCostNode(grid);
+        removeNeighbour(processedNeighbourList, current);
+        
+        current = getLowestCostNode(grid, processedNeighbourList);
         
         if (!current) {
+            freeNeighbourList(processedNeighbourList);
             return NULL;
         }
     }
     
+    freeNeighbourList(processedNeighbourList);
     return reconstructPath(target);
 }
 
@@ -316,6 +411,7 @@ void resetGrid(Grid* grid) {
             grid->cells[x][y].estimatedCostToTarget = FLT_MAX;
             grid->cells[x][y].totalCost = FLT_MAX;
             grid->cells[x][y].visited = 0;
+            grid->cells[x][y].processed = 0;
         }
     }
 }

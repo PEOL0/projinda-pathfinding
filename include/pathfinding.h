@@ -13,12 +13,23 @@ typedef struct node {
     float totalCost;
     int visited;
     int impassable;
+    int processed;
 } Node;
 
 typedef struct grid {
     int width, height;
     Node **cells;
 } Grid;
+
+typedef struct neighbourListNode {
+    Node* curentNode;
+    struct neighbourListNode* nextNode;
+} NeighbourListNode;
+
+typedef struct neighbourList {
+    NeighbourListNode* startNode;
+    NeighbourListNode* endNode;
+} NeighbourList;
 
 /* ----- Grid management functions ----- */
 
@@ -72,17 +83,45 @@ float calculateEstimatedCost(int startX, int startY, int targetX, int targetY);
 /**
  * @brief Find the unvisited node with the lowest total cost
  * @param grid The grid to search in
+ * @param processedNeighbourList List of neighbor nodes to be considered when getting the one with lowest cost
  * @return The lowest cost unvisited node, or NULL if none found
  */
-Node* getLowestCostNode(Grid* grid);
+Node* getLowestCostNode(Grid* grid, NeighbourList* processedNeighbourList);
 
 /**
  * @brief Process neighbors of the current node during pathfinding
  * @param grid The grid being searched
  * @param current The current node being processed
  * @param target The target destination node
+ * @param processedNeighbourList List to track nodes that have been processed
  */
-void processNeighbors(Grid* grid, Node* current, Node* target);
+void processNeighbors(Grid* grid, Node* current, Node* target, NeighbourList* processedNeighbourList);
+
+/**
+ * @brief Create a new empty linkedlist for storing neighboring nodes
+ * @return Pointer to the created neighbor list
+ */
+NeighbourList* createNeighbourList();
+
+/**
+ * @brief Add a node to the neighbor list
+ * @param NeighbourList The list to add the node to
+ * @param node The node to add to the list
+ */
+void addNeighbour(NeighbourList* NeighbourList, Node* node);
+
+/**
+ * @brief Remove a node from the neighbor list
+ * @param NeighbourList The list to remove the node from
+ * @param node The node to remove from the list
+ */
+void removeNeighbour(NeighbourList* NeighbourList, Node* node);
+
+/**
+ * @brief Free a neighbor list and all associated memory
+ * @param neighbourList The neighbor list to free
+ */
+void freeNeighbourList(NeighbourList* neighbourList);
 
 /* ----- Path handling functions ----- */
 
