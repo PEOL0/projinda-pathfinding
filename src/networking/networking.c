@@ -50,8 +50,9 @@ void onmessage(ws_cli_conn_t client,
         printf("Received coordinates: start(%d,%d) target(%d,%d)\n", startX, startY, targetX, targetY);
         
         Grid* grid = createGrid(listgorareCols, listgorareRows, listgorare());
+        printf("Created grid");
         Node** path = findPath(grid, startX, startY, targetX, targetY);
-        
+        printf("Created foundPath done");
         if (path != NULL) {
             int pathLength = 0;
             while (path[pathLength] != NULL) {

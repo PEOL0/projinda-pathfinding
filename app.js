@@ -72,6 +72,8 @@ klickArea.addEventListener('click', function(event) {
 function createRoute() {
     // Skicka koordiinater till Algoritm
     console.log(`KLICKAT PÅ CREATE ROTE KNAPP ${start},${slut}`);
+    let message = Math.round(start[0]/2)+","+Math.round(start[1]/2)+ ","+ Math.round(slut[0]/2) + "," + Math.round(slut[1]/2);
+    socket.send(message);
 }
 
 function rita(x, y) {
@@ -85,5 +87,8 @@ function rita(x, y) {
 
 socket.onopen = function () {
     console.log("Socket connected");
-    socket.send("halloo")
+}
+
+socket.onmessage = function (message) {
+    console.log(message);
 }
