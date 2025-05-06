@@ -13,6 +13,7 @@ typedef struct node {
     float totalCost;
     int visited;
     int impassable;
+    int processed;
 } Node;
 
 typedef struct grid {

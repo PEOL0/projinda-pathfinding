@@ -45,6 +45,7 @@ Grid* createGrid(int width, int height, float** heightInfo) {
             grid->cells[x][y].totalCost = FLT_MAX;
             grid->cells[x][y].visited = 0;
             grid->cells[x][y].impassable = 0;
+            grid->cells[x][y].processed = 0;
         }
     }
     
@@ -182,7 +183,7 @@ NeighbourList* createNeighbourList() {
 }
 
 void addNeighbour(NeighbourList* neighbourList, Node* node) {
-    if (!neighbourList || !node) {
+    if (!neighbourList || !node || node->processed) {
         return;
     }
     
@@ -201,6 +202,7 @@ void addNeighbour(NeighbourList* neighbourList, Node* node) {
         neighbourList->endNode->nextNode = newNode;
         neighbourList->endNode = newNode;
     }
+    node->processed = 1;
 }
 
 void removeNeighbour(NeighbourList* neighbourList, Node* node) {
@@ -312,13 +314,13 @@ Node** findPath(Grid* grid, int startX, int startY, int targetX, int targetY) {
     if (!processedNeighbourList) {
         return NULL;
     }
-    
+
     while (current != target) {
         current->visited = 1;
         
-        removeNeighbour(processedNeighbourList, current);
-        
         processNeighbors(grid, current, target, processedNeighbourList);
+        
+        removeNeighbour(processedNeighbourList, current);
         
         current = getLowestCostNode(grid, processedNeighbourList);
         
@@ -409,6 +411,7 @@ void resetGrid(Grid* grid) {
             grid->cells[x][y].estimatedCostToTarget = FLT_MAX;
             grid->cells[x][y].totalCost = FLT_MAX;
             grid->cells[x][y].visited = 0;
+            grid->cells[x][y].processed = 0;
         }
     }
 }
