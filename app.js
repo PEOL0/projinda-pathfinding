@@ -1,4 +1,5 @@
 console.log("JS scriptad");
+const socket = new WebSocket('ws://localhost:8080');
 
 function createMap() {
     const selectedArea = document.getElementById('areaSelect').value;
@@ -80,4 +81,9 @@ function rita(x, y) {
     markerVag.style.top = y + 'px';
     klickArea.appendChild(marker);
 
+}
+
+socket.onopen = function () {
+    console.log("Socket connected");
+    socket.send("halloo")
 }
