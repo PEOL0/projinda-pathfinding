@@ -166,6 +166,34 @@ void processNeighbors(Grid* grid, Node* current, Node* target) {
     }
 }
 
+NeighbourList* createNeighbourList() {
+    NeighbourList* neighbourList = (NeighbourList*)malloc(sizeof(NeighbourList));
+    
+    if (!neighbourList) {
+        return NULL;
+    }
+
+    neighbourList->curentNode = NULL;
+    neighbourList->nextNode = NULL;
+    
+    return neighbourList;
+}
+
+void freeNeighbourList(NeighbourList* neighbourList) {
+    if (!neighbourList) {
+        return;
+    }
+
+    NeighbourList* current = neighbourList;
+    NeighbourList* next;
+    
+    while (current != NULL) {
+        next = current->nextNode;
+        free(current);
+        current = next;
+    }
+}
+
 /**
  * Reconstructs the complete path from start to target by walking backwards through the linked nodes starting from the target node.
  * Returns a NULL-terminated array of Node pointers representing the path.
