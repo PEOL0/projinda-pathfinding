@@ -81,7 +81,7 @@ function rita(x, y) {
     markerVag.className = 'markerVag';
     markerVag.style.left = x + 'px';
     markerVag.style.top = y + 'px';
-    klickArea.appendChild(marker);
+    klickArea.appendChild(markerVag);
 
 }
 
@@ -89,6 +89,25 @@ socket.onopen = function () {
     console.log("Socket connected");
 }
 
+function processAndDraw(input) {
+    let points = input.split(";"); 
+  
+    while (points.length > 0) {
+        let pair = points.shift(); 
+        if (!pair) continue;
+  
+        let [xStr, yStr] = pair.split(","); 
+        let x = parseFloat(xStr);
+        let y = parseFloat(yStr);
+  
+        if (!isNaN(x) && !isNaN(y)) {
+            rita(2*x, 2*y);
+        }
+    }
+  }
+  
+
 socket.onmessage = function (message) {
     console.log(message);
+    processAndDraw(message.data);
 }
