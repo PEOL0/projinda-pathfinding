@@ -20,7 +20,7 @@ Detta projekt har som syfte att underlätta vägval för orienterare och andra k
 - Välj ut den punkten/noden som har minst heuristisk kostnad
 
 #### processNeighbors
-- Kolla vilka grannar som är bäst
+- Kolla vilka grannar som har minst kostnad till slutnoden
 
 #### reconstructPath / freePath
 - Skapa väg / ta bort väg
@@ -39,11 +39,13 @@ Detta projekt har som syfte att underlätta vägval för orienterare och andra k
 
 ## Hur man använder programmet
 
+Se till att ha https://github.com/Theldus/wsServer installerad på datorn
+
 1. Öppna upp index.html i en browser
 2. Välj område att visa
-3. TODO NEDÅT
-4. Klicka på start och slutpunkt på kartan som visas
-5. Klicka på "generera väg"
+3. Klicka på start och slutpunkt på kartan som visas. 
+4. Klicka på "generera väg"
+5. Nu ska den smidigaste vägen mellan de två punkterna visas
 
 
 
