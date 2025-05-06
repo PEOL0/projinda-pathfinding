@@ -20,6 +20,11 @@ typedef struct grid {
     Node **cells;
 } Grid;
 
+typedef struct neighbourListNode {
+    Node* curentNode;
+    struct neighbourListNode* nextNode;
+} NeighbourList;
+
 /* ----- Grid management functions ----- */
 
 /**
