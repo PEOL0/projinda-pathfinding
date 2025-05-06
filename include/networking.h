@@ -1,6 +1,8 @@
 #ifndef NETWORKING_H
 #define NETWORKING_H
 
+#include <ws.h>
+
 /**
  * @brief This function is called whenever a new connection is opened
  * @param client Client connection
