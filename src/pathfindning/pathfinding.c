@@ -95,26 +95,26 @@ float calculateEstimatedCost(int startX, int startY, int targetX, int targetY) {
 }
 
 /**
- * Finds the unvisited node with the lowest total cost in the grid.
+ * Finds the unvisited node with the lowest total cost in the processedNodeList.
  * Used by pathfinding algorithms to determine the next node to explore.
  */
-Node* getLowestCostNode(Grid* grid) {
-    if (!grid) {
+Node* getLowestCostNode(Grid* grid, NeighbourList* processedNeighbourList) {
+    if (!grid || !processedNeighbourList || !processedNeighbourList->startNode) {
         return NULL;
     }
     
     Node* lowestCostNode = NULL;
     float lowestCost = FLT_MAX;
     
-    for (int x = 0; x < grid->width; x++) {
-        for (int y = 0; y < grid->height; y++) {
-            Node* currentNode = &grid->cells[x][y];
-            if (!currentNode->visited && !currentNode->impassable && 
-                currentNode->totalCost < lowestCost) {
-                lowestCost = currentNode->totalCost;
-                lowestCostNode = currentNode;
-            }
+    NeighbourListNode* current = processedNeighbourList->startNode;
+    
+    while (current != NULL) {
+        Node* node = current->curentNode;
+        if (!node->visited && !node->impassable && node->totalCost < lowestCost) {
+            lowestCost = node->totalCost;
+            lowestCostNode = node;
         }
+        current = current->nextNode;
     }
     
     return lowestCostNode;
@@ -124,7 +124,7 @@ Node* getLowestCostNode(Grid* grid) {
  * Processes all valid neighboring nodes of the current node during pathfinding.
  * Updates cost values and path connections for neighbors if a better path is found.
  */
-void processNeighbors(Grid* grid, Node* current, Node* target) {
+void processNeighbors(Grid* grid, Node* current, Node* target, NeighbourList* processedNeighbourList) {
     if (!grid || !current || !target) {
         return;
     }
@@ -163,6 +163,8 @@ void processNeighbors(Grid* grid, Node* current, Node* target) {
             );
             neighbor->totalCost = neighbor->costFromStart + neighbor->estimatedCostToTarget;
         }
+        
+        addNeighbour(processedNeighbourList, neighbor);
     }
 }
 
@@ -306,18 +308,27 @@ Node** findPath(Grid* grid, int startX, int startY, int targetX, int targetY) {
     current->estimatedCostToTarget = calculateEstimatedCost(startX, startY, targetX, targetY);
     current->totalCost = current->estimatedCostToTarget;
     
+    NeighbourList* processedNeighbourList = createNeighbourList();
+    if (!processedNeighbourList) {
+        return NULL;
+    }
+    
     while (current != target) {
         current->visited = 1;
         
-        processNeighbors(grid, current, target);
+        removeNeighbour(processedNeighbourList, current);
         
-        current = getLowestCostNode(grid);
+        processNeighbors(grid, current, target, processedNeighbourList);
+        
+        current = getLowestCostNode(grid, processedNeighbourList);
         
         if (!current) {
+            freeNeighbourList(processedNeighbourList);
             return NULL;
         }
     }
     
+    freeNeighbourList(processedNeighbourList);
     return reconstructPath(target);
 }
 
