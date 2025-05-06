@@ -173,8 +173,8 @@ NeighbourList* createNeighbourList() {
         return NULL;
     }
 
-    neighbourList->curentNode = NULL;
-    neighbourList->nextNode = NULL;
+    neighbourList->startNode = NULL;
+    neighbourList->endNode = NULL;
     
     return neighbourList;
 }
@@ -184,14 +184,16 @@ void freeNeighbourList(NeighbourList* neighbourList) {
         return;
     }
 
-    NeighbourList* current = neighbourList;
-    NeighbourList* next;
-    
+    NeighbourListNode* current = neighbourList->startNode;
+    NeighbourListNode* next;
+
     while (current != NULL) {
         next = current->nextNode;
         free(current);
         current = next;
     }
+    
+    free(neighbourList);
 }
 
 /**
