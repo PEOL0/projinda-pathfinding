@@ -39,8 +39,8 @@ typedef struct targetList {
 /**
  * @brief Create a target list from an array of coordinates
  * @param grid The grid from which to get nodes
- * @param coords Array of coordinate pairs [x1,y1,x2,y2,...] for targets
- * @param count Number of targets (must be half the length of coords array)
+ * @param coords Array of coordinate pairs [x1, y1, x2, y2, ...] representing target points
+ * @param count Number of target points (equal to half the length of the coords array, as each point is represented by an x and y coordinate)
  * @return Pointer to the created target list
  */
 TargetList* constructTargetList(Grid* grid, int* coords, int count);
