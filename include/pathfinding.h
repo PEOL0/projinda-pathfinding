@@ -31,6 +31,11 @@ typedef struct neighbourList {
     NeighbourListNode* endNode;
 } NeighbourList;
 
+typedef struct targetList {
+    int size;
+    int* targets[];
+} TargetList;
+
 /* ----- Grid management functions ----- */
 
 /**
