@@ -33,7 +33,7 @@ typedef struct neighbourList {
 
 typedef struct targetList {
     int size;
-    int* targets[];
+    Node* targets[];
 } TargetList;
 
 /* ----- Grid management functions ----- */
@@ -67,13 +67,10 @@ void setImpassable(Grid* grid, int x, int y, int value);
 /**
  * @brief Find the shortest path between two points on the grid
  * @param grid The grid to search in
- * @param startX X coordinate of the start point
- * @param startY Y coordinate of the start point
- * @param targetX X coordinate of the target point
- * @param targetY Y coordinate of the target point
+ * @param targets List of target nodes
  * @return Array of Node pointers representing the path, or NULL if no path exists
  */
-Node** findPath(Grid* grid, int startX, int startY, int targetX, int targetY);
+Node** findPath(Grid* grid, TargetList* targets);
 
 /**
  * @brief Calculate the heuristic distance/estimated cost between two points
