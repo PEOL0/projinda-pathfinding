@@ -74,12 +74,21 @@ void setImpassable(Grid* grid, int x, int y, int value);
 /* ----- A* algorithm core functions ----- */
 
 /**
- * @brief Find the shortest path between two points on the grid
+ * @brief Find the shortest path through multiple targets
  * @param grid The grid to search in
- * @param targets List of target nodes
- * @return Array of Node pointers representing the path, or NULL if no path exists
+ * @param targets List of target nodes to visit in sequence
+ * @return Array of Node pointers representing the complete path, or NULL if no path exists
  */
 Node** findPath(Grid* grid, TargetList* targets);
+
+/**
+ * @brief Find the shortest path between two specific points on the grid
+ * @param grid The grid to search in
+ * @param start Pointer to the starting node
+ * @param target Pointer to the target node
+ * @return Array of Node pointers representing the path, or NULL if no path exists
+ */
+Node** findPathBetweenPoints(Grid* grid, Node* start, Node* target);
 
 /**
  * @brief Calculate the heuristic distance/estimated cost between two points

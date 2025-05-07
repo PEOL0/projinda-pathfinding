@@ -259,7 +259,7 @@ void freeNeighbourList(NeighbourList* neighbourList) {
  * Returns NULL if memory allocation fails or parameters are invalid.
  */
 TargetList* constructTargetList(Grid* grid, int* coords, int count) {
-    if (!grid || !coords || count <= 2) {
+    if (!grid || !coords || !(count >= 2)) {
         return NULL;
     }
     
@@ -317,30 +317,31 @@ Node** reconstructPath(Node* targetNode) {
 }
 
 /**
- * Implements the A* algorithm to find the shortest path between two points.
- * Returns a NULL-terminated array of nodes or NULL if no path exists.
+ * Finds the shortest path between two specific points on the grid using A* algorithm.
+ * Takes the grid to search in, a pointer to the starting node, and a pointer to the
+ * target node. Returns a NULL-terminated array of Node pointers representing the path,
+ * or NULL if no path exists.
  */
-Node** findPath(Grid* grid, int startX, int startY, int targetX, int targetY) {
-    if (!grid) {
+Node** findPathBetweenPoints(Grid* grid, Node* start, Node* target) {
+    if (!grid || !start || !target) {
         return NULL;
     }
 
-    if (startX == targetX && startY == targetY) {
+    if (start == target) {
         return NULL;
     }
-
-    Node* target = getNode(grid, targetX, targetY);
-    Node* current = getNode(grid, startX, startY);
     
-    if (!target || !current || target->impassable || current->impassable || !isValid(grid,startX,startY) || !isValid(grid,targetX,targetY)) {
+    if (start->impassable || target->impassable) {
         return NULL;
     }
     
     resetGrid(grid);
     
-    current->costFromStart = 0;
-    current->estimatedCostToTarget = calculateEstimatedCost(startX, startY, targetX, targetY);
-    current->totalCost = current->estimatedCostToTarget;
+    start->costFromStart = 0;
+    start->estimatedCostToTarget = calculateEstimatedCost(start->x, start->y, target->x, target->y);
+    start->totalCost = start->estimatedCostToTarget;
+    
+    Node* current = start;
     
     NeighbourList* processedNeighbourList = createNeighbourList();
     if (!processedNeighbourList) {
@@ -364,6 +365,86 @@ Node** findPath(Grid* grid, int startX, int startY, int targetX, int targetY) {
     
     freeNeighbourList(processedNeighbourList);
     return reconstructPath(target);
+}
+
+/**
+ * Finds the shortest path through multiple targets using A* algorithm.
+ * Takes the grid to search in and a list of target nodes to visit in sequence.
+ * Returns a NULL-terminated array of Node pointers representing the path,
+ * or NULL if no path exists.
+ */
+Node** findPath(Grid* grid, TargetList* targets) {
+    if (!grid || !targets || targets->size < 2) {
+        return NULL;
+    }
+    
+    int totalPathLength = 0;
+    Node*** pathSegments = (Node***)malloc((targets->size - 1) * sizeof(Node**));
+    
+    if (!pathSegments) {
+        return NULL;
+    }
+    
+    for (int i = 0; i < targets->size - 1; i++) {
+        Node* start = targets->targets[i];
+        Node* end = targets->targets[i + 1];
+        
+        if (!start || !end || start->impassable || end->impassable) {
+            for (int j = 0; j < i; j++) {
+                freePath(pathSegments[j]);
+            }
+            free(pathSegments);
+            return NULL;
+        }
+        
+        pathSegments[i] = findPathBetweenPoints(grid, start, end);
+        
+        if (!pathSegments[i]) {
+            for (int j = 0; j < i; j++) {
+                freePath(pathSegments[j]);
+            }
+            free(pathSegments);
+            return NULL;
+        }
+        
+        for (int j = 0; pathSegments[i][j] != NULL; j++) {
+            totalPathLength++;
+        }
+        
+        if (i > 0) {
+            totalPathLength--;
+        }
+    }
+    
+    Node** completePath = (Node**)malloc((totalPathLength + 1) * sizeof(Node*));
+    if (!completePath) {
+        for (int i = 0; i < targets->size - 1; i++) {
+            freePath(pathSegments[i]);
+        }
+        free(pathSegments);
+        return NULL;
+    }
+    
+    int currentIndex = 0;
+    
+    for (int j = 0; pathSegments[0][j] != NULL; j++) {
+        completePath[currentIndex++] = pathSegments[0][j];
+    }
+    
+    for (int i = 1; i < targets->size - 1; i++) {
+        for (int j = 1; pathSegments[i][j] != NULL; j++) {
+            completePath[currentIndex++] = pathSegments[i][j];
+        }
+    }
+    
+    completePath[currentIndex] = NULL;
+    
+    for (int i = 0; i < targets->size - 1; i++) {
+        freePath(pathSegments[i]);
+    }
+    free(pathSegments);
+    
+    return completePath;
 }
 
 /**
