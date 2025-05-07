@@ -253,6 +253,38 @@ void freeNeighbourList(NeighbourList* neighbourList) {
 }
 
 /**
+ * Creates a target list from an array of coordinate pairs.
+ * Each pair of integers in the coords array represents x,y coordinates.
+ * Allocates memory for a TargetList struct containing Node pointers.
+ * Returns NULL if memory allocation fails or parameters are invalid.
+ */
+TargetList* constructTargetList(Grid* grid, int* coords, int count) {
+    if (!grid || !coords || count <= 2) {
+        return NULL;
+    }
+    
+    TargetList* targetList = (TargetList*)malloc(sizeof(TargetList) + count * sizeof(Node*));
+    if (!targetList) {
+        return NULL;
+    }
+    
+    targetList->size = count;
+    
+    for (int i = 0; i < count; i++) {
+        int x = coords[i * 2];
+        int y = coords[i * 2 + 1];
+        
+        targetList->targets[i] = getNode(grid, x, y);
+        if (!targetList->targets[i]) {
+            free(targetList);
+            return NULL;
+        }
+    }
+    
+    return targetList;
+}
+
+/**
  * Reconstructs the complete path from start to target by walking backwards through the linked nodes starting from the target node.
  * Returns a NULL-terminated array of Node pointers representing the path.
  */
