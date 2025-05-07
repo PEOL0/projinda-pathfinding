@@ -41,9 +41,7 @@ if (bg) {
 
 
 const klickArea = document.getElementById('klickArea');
-const start = [0, 0];
-const slut = [0, 0];
-
+let waypoints = []; // Array to store all waypoints
 
 klickArea.addEventListener('click', function(event) {
     const rect = klickArea.getBoundingClientRect();
@@ -57,24 +55,48 @@ klickArea.addEventListener('click', function(event) {
     marker.className = 'marker';
     marker.style.left = x + 'px';
     marker.style.top = y + 'px';
-    if (klickArea.childElementCount <=1) {
-        klickArea.appendChild(marker);
-        start[0] = x;
-        start[1] = y;
-    } else if (klickArea.childElementCount <=2) {
-        klickArea.appendChild(marker);
-        slut[0] = x;
-        slut[1] = y;
-    }
-    console.log(start[0], start[1], slut[0], slut[1]);
+    klickArea.appendChild(marker);
+    
+    // Add the coordinates to our waypoints array
+    waypoints.push([x, y]);
+    
+    console.log(`Added waypoint ${waypoints.length}: ${x}, ${y}`);
 });
 
 function createRoute() {
-    // Skicka koordiinater till Algoritm
-    console.log(`KLICKAT PÅ CREATE ROTE KNAPP ${start},${slut}`);
-    let message = Math.round(start[0]/2)+","+Math.round(start[1]/2)+ ","+ Math.round(slut[0]/2) + "," + Math.round(slut[1]/2);
+    // Check if we have enough waypoints
+    if (waypoints.length < 2) {
+        alert('Please select at least 2 points for a route');
+        return;
+    }
+    
+    console.log(`Creating route with ${waypoints.length} waypoints`);
+    
+    // Build the message string with all waypoints
+    let coords = [];
+    for (let i = 0; i < waypoints.length; i++) {
+        coords.push(Math.round(waypoints[i][0]/2));
+        coords.push(Math.round(waypoints[i][1]/2));
+    }
+    
+    let message = coords.join(',');
+    console.log(`Sending coordinates: ${message}`);
+    
     socket.send(message);
 }
+
+function clearRoute() {
+    const markers = document.querySelectorAll('.marker, .markerVag');
+    markers.forEach(marker => marker.remove());
+    waypoints = []; 
+    console.log('Route cleared');
+}
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'c' || event.key === 'C') {
+        clearRoute();
+    }
+});
 
 function rita(x, y) {
     const markerVag = document.createElement('div');
@@ -82,7 +104,6 @@ function rita(x, y) {
     markerVag.style.left = x + 'px';
     markerVag.style.top = y + 'px';
     klickArea.appendChild(markerVag);
-
 }
 
 socket.onopen = function () {
@@ -90,6 +111,9 @@ socket.onopen = function () {
 }
 
 function processAndDraw(input) {
+    const pathMarkers = document.querySelectorAll('.markerVag');
+    pathMarkers.forEach(marker => marker.remove());
+    
     let points = input.split(";"); 
   
     while (points.length > 0) {
@@ -104,8 +128,7 @@ function processAndDraw(input) {
             rita(2*x, 2*y);
         }
     }
-  }
-  
+}
 
 socket.onmessage = function (message) {
     console.log(message);
