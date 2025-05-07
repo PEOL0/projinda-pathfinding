@@ -31,6 +31,20 @@ typedef struct neighbourList {
     NeighbourListNode* endNode;
 } NeighbourList;
 
+typedef struct targetList {
+    int size;
+    Node* targets[];
+} TargetList;
+
+/**
+ * @brief Create a target list from an array of coordinates
+ * @param grid The grid from which to get nodes
+ * @param coords Array of coordinate pairs [x1, y1, x2, y2, ...] representing target points
+ * @param count Number of target points (equal to half the length of the coords array, as each point is represented by an x and y coordinate)
+ * @return Pointer to the created target list
+ */
+TargetList* constructTargetList(Grid* grid, int* coords, int count);
+
 /* ----- Grid management functions ----- */
 
 /**
@@ -60,15 +74,21 @@ void setImpassable(Grid* grid, int x, int y, int value);
 /* ----- A* algorithm core functions ----- */
 
 /**
- * @brief Find the shortest path between two points on the grid
+ * @brief Find the shortest path through multiple targets
  * @param grid The grid to search in
- * @param startX X coordinate of the start point
- * @param startY Y coordinate of the start point
- * @param targetX X coordinate of the target point
- * @param targetY Y coordinate of the target point
+ * @param targets List of target nodes to visit in sequence
+ * @return Array of Node pointers representing the complete path, or NULL if no path exists
+ */
+Node** findPath(Grid* grid, TargetList* targets);
+
+/**
+ * @brief Find the shortest path between two specific points on the grid
+ * @param grid The grid to search in
+ * @param start Pointer to the starting node
+ * @param target Pointer to the target node
  * @return Array of Node pointers representing the path, or NULL if no path exists
  */
-Node** findPath(Grid* grid, int startX, int startY, int targetX, int targetY);
+Node** findPathBetweenPoints(Grid* grid, Node* start, Node* target);
 
 /**
  * @brief Calculate the heuristic distance/estimated cost between two points

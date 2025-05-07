@@ -45,41 +45,80 @@ void onmessage(ws_cli_conn_t client,
     printf("I receive a message: %s (%zu), from: %s\n", msg,
         size, cli);
 
-    int startX, startY, targetX, targetY;
-    if (sscanf((const char*)msg, "%d,%d,%d,%d", &startX, &startY, &targetX, &targetY) == 4) {
-        printf("Received coordinates: start(%d,%d) target(%d,%d)\n", startX, startY, targetX, targetY);
-        
-        Grid* grid = createGrid(listgorareCols, listgorareRows, listgorare());
-        printf("Created grid");
-        Node** path = findPath(grid, startX, startY, targetX, targetY);
-        printf("Created foundPath done");
-        if (path != NULL) {
-            int pathLength = 0;
-            while (path[pathLength] != NULL) {
-                pathLength++;
-            }
+    char *message = strdup((const char*)msg);
+    if (!message) {
+        ws_sendframe_txt(client, "Error: Memory allocation failed");
+        return;
+    }
 
-            char* response = (char*)malloc(pathLength * 20);
-            response[0] = '\0';
-            
-            for (int i = 0; i < pathLength; i++) {
-                char nodeStr[20];
-                sprintf(nodeStr, "%d,%d;", path[i]->x, path[i]->y);
-                strcat(response, nodeStr);
-            }
+    int coordCount = 0;
+    char *ptr = message;
+    while (*ptr) {
+        if (*ptr == ',') coordCount++;
+        ptr++;
+    }
+    coordCount = (coordCount + 1) / 2;
 
-            ws_sendframe_txt(client, response);
-            
-            free(response);
-            freePath(path);
-        } else {
-            ws_sendframe_txt(client, "No path found");
+    if (coordCount < 2) {
+        ws_sendframe_txt(client, "Error: Need at least start and target coordinates (x1,y1,x2,y2)");
+        free(message);
+        return;
+    }
+
+    printf("Detected %d coordinate pairs\n", coordCount);
+
+    int *coords = (int*)malloc(coordCount * 2 * sizeof(int));
+    if (!coords) {
+        ws_sendframe_txt(client, "Error: Memory allocation failed");
+        free(message);
+        return;
+    }
+
+    char *token = strtok(message, ",");
+    int i = 0;
+    while (token != NULL && i < coordCount * 2) {
+        coords[i++] = atoi(token);
+        token = strtok(NULL, ",");
+    }
+
+    printf("Parsed coordinates \n");
+   
+    Grid* grid = createGrid(listgorareCols, listgorareRows, listgorare());
+    printf("Created grid\n");
+    
+    // Create target list with the coordCount points
+    TargetList* targets = constructTargetList(grid, coords, coordCount);
+    
+    Node** path = findPath(grid, targets);
+    printf("Created foundPath done\n");
+    if (path != NULL) {
+        int pathLength = 0;
+        while (path[pathLength] != NULL) {
+            pathLength++;
         }
 
-        freeGrid(grid);
+        char* response = (char*)malloc(pathLength * 20);
+        response[0] = '\0';
+        
+        for (int i = 0; i < pathLength; i++) {
+            char nodeStr[20];
+            sprintf(nodeStr, "%d,%d;", path[i]->x, path[i]->y);
+            strcat(response, nodeStr);
+        }
+
+        ws_sendframe_txt(client, response);
+        
+        free(response);
+        freePath(path);
     } else {
-        ws_sendframe_txt(client, "Error: Message format should be 'startX,startY,targetX,targetY'");
+        ws_sendframe_txt(client, "No path found");
     }
+    
+    // Free allocated memory
+    free(targets);
+    freeGrid(grid);
+    free(coords);
+    free(message);
 }
 
 int serverLoop(void)
