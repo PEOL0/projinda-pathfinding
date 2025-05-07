@@ -41,9 +41,13 @@ if (bg) {
 
 
 const klickArea = document.getElementById('klickArea');
-let waypoints = []; // Array to store all waypoints
+let waypoints = [];
 
 klickArea.addEventListener('click', function(event) {
+    if (event.target.tagName === 'BUTTON' || event.target.closest('button')) {
+        return; 
+    }
+    
     const rect = klickArea.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
@@ -57,14 +61,12 @@ klickArea.addEventListener('click', function(event) {
     marker.style.top = y + 'px';
     klickArea.appendChild(marker);
     
-    // Add the coordinates to our waypoints array
     waypoints.push([x, y]);
     
     console.log(`Added waypoint ${waypoints.length}: ${x}, ${y}`);
 });
 
 function createRoute() {
-    // Check if we have enough waypoints
     if (waypoints.length < 2) {
         alert('Please select at least 2 points for a route');
         return;
@@ -72,7 +74,6 @@ function createRoute() {
     
     console.log(`Creating route with ${waypoints.length} waypoints`);
     
-    // Build the message string with all waypoints
     let coords = [];
     for (let i = 0; i < waypoints.length; i++) {
         coords.push(Math.round(waypoints[i][0]/2));
