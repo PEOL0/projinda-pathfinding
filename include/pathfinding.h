@@ -36,6 +36,14 @@ typedef struct targetList {
     Node* targets[];
 } TargetList;
 
+/**
+ * @brief Create a target list from an array of coordinates
+ * @param coords Array of coordinate pairs [x1,y1,x2,y2,...] for targets
+ * @param count Number of targets (must be half the length of coords array)
+ * @return Pointer to the created target list
+ */
+TargetList* constructTargetList(int* coords, int count);
+
 /* ----- Grid management functions ----- */
 
 /**
