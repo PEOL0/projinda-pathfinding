@@ -3,8 +3,8 @@
 #include <string.h>
 #include <unistd.h>
 
-const int WIDTH = 725;
-const int HEIGHT = 370;
+const int WIDTH = 1000;
+const int HEIGHT = 1000;
 
 void loadPGM(const char *filename, float **image) {
 
@@ -97,7 +97,7 @@ float **listgorare2() {
     }
 
     printf("Klarade att ska en image och ska nu köra loadPGM \n");
-    loadPGM("test.pgm", image);
+    loadPGM("helluheightInfoBILD.pgm", image);
     printImagePreview(image, WIDTH, HEIGHT, 10, 10);  // Print a 10×10 preview
     return image;
 }

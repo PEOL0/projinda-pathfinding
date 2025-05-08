@@ -26,7 +26,7 @@ const area = getQueryParam("area");
 
 // Backgrounds - can be colors or image URLs
 const backgrounds = {
-    "SKOG nr 1": "url('assets/bergaKarta.png')"
+    "SKOG nr 1": "url('assets/helluheightInfoBILD.png')"
 }
 
 const bg = backgrounds[area];
@@ -72,7 +72,7 @@ klickArea.addEventListener('click', function(event) {
 function createRoute() {
     // Skicka koordiinater till Algoritm
     console.log(`KLICKAT PÅ CREATE ROTE KNAPP ${start},${slut}`);
-    let message = Math.round(start[0]/2)+","+Math.round(start[1]/2)+ ","+ Math.round(slut[0]/2) + "," + Math.round(slut[1]/2);
+    let message = Math.round(start[0])+","+Math.round(start[1])+ ","+ Math.round(slut[0]) + "," + Math.round(slut[1]);
     socket.send(message);
 }
 
@@ -101,7 +101,7 @@ function processAndDraw(input) {
         let y = parseFloat(yStr);
   
         if (!isNaN(x) && !isNaN(y)) {
-            rita(2*x, 2*y);
+            rita(x, y);
         }
     }
   }
