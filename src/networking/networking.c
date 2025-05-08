@@ -46,6 +46,7 @@ void onmessage(ws_cli_conn_t client,
     printf("I receive a message: %s (%zu), from: %s\n", msg,
         size, cli);
 
+
     char *message = strdup((const char*)msg);
     if (!message) {
         ws_sendframe_txt(client, "Error: Memory allocation failed");

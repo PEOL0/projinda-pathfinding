@@ -26,7 +26,7 @@ const area = getQueryParam("area");
 
 // Backgrounds - can be colors or image URLs
 const backgrounds = {
-    "SKOG nr 1": "url('assets/helluheightInfoBILD.png')"
+    "Berga": "url('assets/helluheightInfoBILD.png')"
 }
 
 const bg = backgrounds[area];
@@ -41,6 +41,7 @@ if (bg) {
 
 
 const klickArea = document.getElementById('klickArea');
+
 let waypoints = [];
 
 klickArea.addEventListener('click', function(event) {
@@ -59,6 +60,7 @@ klickArea.addEventListener('click', function(event) {
     marker.className = 'marker';
     marker.style.left = x + 'px';
     marker.style.top = y + 'px';
+
     klickArea.appendChild(marker);
     
     waypoints.push([x, y]);
@@ -104,6 +106,7 @@ function rita(x, y) {
     markerVag.className = 'markerVag';
     markerVag.style.left = x + 'px';
     markerVag.style.top = y + 'px';
+
     klickArea.appendChild(markerVag);
 }
 

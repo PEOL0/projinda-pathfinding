@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 const int listgorareCols = 1000;
 const int listgorareRows = 1000;
 
@@ -12,6 +13,7 @@ float** listgorare() {
     }
 
     // listY koordinater 
+
     for (int i = 0; i < listgorareCols; i++) {
         heightinfo[i] = (float *)malloc(listgorareRows * sizeof(float));
         if (heightinfo[i] == NULL) {
@@ -25,16 +27,19 @@ float** listgorare() {
     }
 
     // INitalize hela grid med 0 
+
     for (int i = 0; i < listgorareCols; i++) {
         for (int j = 0; j < listgorareRows; j++) {
             heightinfo[i][j] = 0;
         }
     }
 
+
     /*for (int i = 0; i < listgorareRows; i++) {
         free(heightinfo[i]);
     }
     //free(heightinfo);*/
+
 
     return heightinfo;
 }
