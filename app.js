@@ -133,5 +133,13 @@ function processAndDraw(input) {
 
 socket.onmessage = function (message) {
     console.log(message);
+    
+    // Check if the message starts with "error"
+    if (message.data.toString().toLowerCase().startsWith('no')) {
+        clearRoute();
+        alert(message.data);
+        return;
+    }
+    
     processAndDraw(message.data);
 }
