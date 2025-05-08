@@ -1,5 +1,6 @@
 * {
   margin: 0px;
+  padding: 0px;
 }
 
 body {
@@ -51,8 +52,6 @@ select, #createMapButton {
   justify-self: center;
 }
 
-
-
 button {
   background-color: #4CAF50;
   color: white;
@@ -79,7 +78,9 @@ button:hover {
   width: 100vw;
   height: 100vh;
   background-size: cover;
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
   cursor: crosshair;
   display: flex;
   justify-content: center;
