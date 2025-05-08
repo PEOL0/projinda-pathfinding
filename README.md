@@ -39,6 +39,8 @@ Se till att ha https://github.com/Theldus/wsServer installerad på datorn
 4. Klicka på "Create Best Route!"
 5. Nu ska den smidigaste vägen mellan de två punkterna visas!
 
+> [!TIP]  
+> Tryck på C för att rensa alla punkter
 
 
 ## Buggar och TODOs
@@ -46,8 +48,7 @@ Vi är medvetna om vissa buggar som finns i detta projekt, och ämnar att lösa 
 
 ### Buggar
 - Problem med olika skärmstorlekar. Skärm större/mindre än bilden ibland
-- Man kan inte klicka längst ut på kanterna
-
+- ~~Man kan inte klicka längst ut på kanterna~~
 ### TODOs
 - Lägga till fler områden att välja kartor från 
 - Linea upp en terrängkarta över området med den faktiska höjdkartan för att underlätta användarvänligheten
