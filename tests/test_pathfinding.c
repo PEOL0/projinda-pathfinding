@@ -188,11 +188,41 @@ void test_calculateEstimatedCost(void) {
 }
 
 /**
- * Tests the findPath function with a straight-line path.
- * Verifies that the function correctly finds the shortest path
- * in a vertical straight line from (0,0) to (0,9).
+ * Tests the constructTargetList function to ensure it correctly creates target lists.
  */
-void test_findPath_straight(void) {
+void test_constructTargetList(void) {
+    if (!testGrid) {
+        testGrid = createGrid(10, 10, testHeightData);
+    }
+    
+    int coords[] = {0, 0, 5, 5, 9, 9};
+    int count = 3;
+    
+    TargetList* targetList = constructTargetList(testGrid, coords, count);
+    
+    CU_ASSERT_PTR_NOT_NULL(targetList);
+    CU_ASSERT_EQUAL(targetList->size, 3);
+    CU_ASSERT_EQUAL(targetList->targets[0]->x, 0);
+    CU_ASSERT_EQUAL(targetList->targets[0]->y, 0);
+    CU_ASSERT_EQUAL(targetList->targets[1]->x, 5);
+    CU_ASSERT_EQUAL(targetList->targets[1]->y, 5);
+    CU_ASSERT_EQUAL(targetList->targets[2]->x, 9);
+    CU_ASSERT_EQUAL(targetList->targets[2]->y, 9);
+    
+    free(targetList);
+    
+    // Test with invalid inputs
+    CU_ASSERT_PTR_NULL(constructTargetList(NULL, coords, count));
+    CU_ASSERT_PTR_NULL(constructTargetList(testGrid, NULL, count));
+    CU_ASSERT_PTR_NULL(constructTargetList(testGrid, coords, 0));
+}
+
+/**
+ * Tests the findPathBetweenPoints function with a straight-line path.
+ * Verifies that the function correctly finds the shortest path
+ * in a vertical straight line.
+ */
+void test_findPathBetweenPoints_straight(void) {
     if (!testGrid) {
         testGrid = createGrid(10, 10, testHeightData);
     }
@@ -204,7 +234,10 @@ void test_findPath_straight(void) {
         }
     }
     
-    Node** path = findPath(testGrid, 0, 0, 0, 9);
+    Node* start = getNode(testGrid, 0, 0);
+    Node* end = getNode(testGrid, 0, 9);
+    
+    Node** path = findPathBetweenPoints(testGrid, start, end);
     
     CU_ASSERT_PTR_NOT_NULL(path);
     
@@ -225,10 +258,10 @@ void test_findPath_straight(void) {
 }
 
 /**
- * Tests the findPath function with a simple empty grid case.
+ * Tests the findPathBetweenPoints function with a simple empty grid case.
  * Verifies path existence, length, and correctness of start/end points.
  */
-void test_findPath_simple(void) {
+void test_findPathBetweenPoints_simple(void) {
     if (!testGrid) {
         testGrid = createGrid(10, 10, testHeightData);
     }
@@ -240,7 +273,10 @@ void test_findPath_simple(void) {
         }
     }
     
-    Node** path = findPath(testGrid, 0, 0, 9, 9);
+    Node* start = getNode(testGrid, 0, 0);
+    Node* end = getNode(testGrid, 9, 9);
+    
+    Node** path = findPathBetweenPoints(testGrid, start, end);
     
     CU_ASSERT_PTR_NOT_NULL(path);
     
@@ -262,10 +298,10 @@ void test_findPath_simple(void) {
 }
 
 /**
- * Tests the findPath function with obstacles in the grid.
+ * Tests the findPathBetweenPoints function with obstacles in the grid.
  * Verifies path existence and that it correctly navigates around obstacles.
  */
-void test_findPath_obstacle(void) {
+void test_findPathBetweenPoints_obstacle(void) {
     if (!testGrid) {
         testGrid = createGrid(10, 10, testHeightData);
     }
@@ -276,7 +312,10 @@ void test_findPath_obstacle(void) {
         setImpassable(testGrid, 5, y, 1);
     }
     
-    Node** path = findPath(testGrid, 0, 0, 9, 0);
+    Node* start = getNode(testGrid, 0, 0);
+    Node* end = getNode(testGrid, 9, 0);
+    
+    Node** path = findPathBetweenPoints(testGrid, start, end);
     
     CU_ASSERT_PTR_NOT_NULL(path);
     
@@ -305,10 +344,10 @@ void test_findPath_obstacle(void) {
 }
 
 /**
- * Tests the findPath function with an impossible path scenario.
+ * Tests the findPathBetweenPoints function with an impossible path scenario.
  * Verifies that the function correctly returns NULL when no path is possible.
  */
-void test_findPath_impossible(void) {
+void test_findPathBetweenPoints_impossible(void) {
     if (!testGrid) {
         testGrid = createGrid(10, 10, testHeightData);
     }
@@ -319,9 +358,82 @@ void test_findPath_impossible(void) {
         setImpassable(testGrid, 5, y, 1);
     }
     
-    Node** path = findPath(testGrid, 0, 5, 9, 5);
+    Node* start = getNode(testGrid, 0, 5);
+    Node* end = getNode(testGrid, 9, 5);
+    
+    Node** path = findPathBetweenPoints(testGrid, start, end);
     
     CU_ASSERT_PTR_NULL(path);
+}
+
+/**
+ * Tests the findPath function with multiple targets.
+ * Verifies that the function correctly finds a path through all targets.
+ */
+void test_findPath_multiTarget(void) {
+    if (!testGrid) {
+        testGrid = createGrid(10, 10, testHeightData);
+    }
+    
+    resetGrid(testGrid);
+    for (int x = 0; x < 10; x++) {
+        for (int y = 0; y < 10; y++) {
+            testGrid->cells[x][y].impassable = 0;
+        }
+    }
+    
+    int coords[] = {0, 0, 5, 5, 9, 9};
+    int count = 3;
+    
+    TargetList* targetList = constructTargetList(testGrid, coords, count);
+    
+    Node** path = findPath(testGrid, targetList);
+    
+    CU_ASSERT_PTR_NOT_NULL(path);
+    
+    int length = 0;
+    while (path[length] != NULL) length++;
+    
+    CU_ASSERT_TRUE(length > 0);
+    
+    if (path) {
+        CU_ASSERT_EQUAL(path[0]->x, 0);
+        CU_ASSERT_EQUAL(path[0]->y, 0);
+        
+        CU_ASSERT_EQUAL(path[length-1]->x, 9);
+        CU_ASSERT_EQUAL(path[length-1]->y, 9);
+        
+        freePath(path);
+    }
+    
+    free(targetList);
+}
+
+/**
+ * Tests the findPath function with an impossible path scenario.
+ * Verifies that the function correctly returns NULL when no path is possible.
+ */
+void test_findPath_multiTarget_impossible(void) {
+    if (!testGrid) {
+        testGrid = createGrid(10, 10, testHeightData);
+    }
+    
+    resetGrid(testGrid);
+    
+    for (int y = 0; y < 10; y++) {
+        setImpassable(testGrid, 5, y, 1);
+    }
+    
+    int coords[] = {0, 5, 9, 5};
+    int count = 2;
+    
+    TargetList* targetList = constructTargetList(testGrid, coords, count);
+    
+    Node** path = findPath(testGrid, targetList);
+    
+    CU_ASSERT_PTR_NULL(path);
+    
+    free(targetList);
 }
 
 /**
@@ -376,10 +488,13 @@ int main() {
         (NULL == CU_add_test(pSuite, "Test isValid", test_isValid)) ||
         (NULL == CU_add_test(pSuite, "Test resetGrid", test_resetGrid)) ||
         (NULL == CU_add_test(pSuite, "Test calculateEstimatedCost", test_calculateEstimatedCost)) ||
-        (NULL == CU_add_test(pSuite,"Test findPath in a straight line", test_findPath_straight)) ||
-        (NULL == CU_add_test(pSuite, "Test findPath simple case", test_findPath_simple)) ||
-        (NULL == CU_add_test(pSuite, "Test findPath with obstacle", test_findPath_obstacle)) ||
-        (NULL == CU_add_test(pSuite, "Test findPath impossible path", test_findPath_impossible)) ||
+        (NULL == CU_add_test(pSuite, "Test constructTargetList", test_constructTargetList)) ||
+        (NULL == CU_add_test(pSuite, "Test findPathBetweenPoints in a straight line", test_findPathBetweenPoints_straight)) ||
+        (NULL == CU_add_test(pSuite, "Test findPathBetweenPoints simple case", test_findPathBetweenPoints_simple)) ||
+        (NULL == CU_add_test(pSuite, "Test findPathBetweenPoints with obstacle", test_findPathBetweenPoints_obstacle)) ||
+        (NULL == CU_add_test(pSuite, "Test findPathBetweenPoints impossible path", test_findPathBetweenPoints_impossible)) ||
+        (NULL == CU_add_test(pSuite, "Test findPath with multiple targets", test_findPath_multiTarget)) ||
+        (NULL == CU_add_test(pSuite, "Test findPath with multiple targets impossible path", test_findPath_multiTarget_impossible)) ||
         (NULL == CU_add_test(pSuite, "Test getPathLength", test_getPathLength))) {
         CU_cleanup_registry();
         return CU_get_error();
