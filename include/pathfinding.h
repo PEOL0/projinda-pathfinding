@@ -53,7 +53,7 @@ void setImpassable(Grid* grid, int x, int y, int value);
  * @param grid The grid to search in
  * @param startX X coordinate of the start point
  * @param startY Y coordinate of the start point
- * @param targetX X coordinate of the target point
+ * @param targetX X coordinate of the target pointfreeGridfreeGrid
  * @param targetY Y coordinate of the target point
  * @return Array of Node pointers representing the path, or NULL if no path exists
  */

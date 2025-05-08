@@ -5,8 +5,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <wsserver/ws.h>
-#include "pathfinding.h"
-#include "heightinfo.h"
+#include "../../include/pathfinding.h"
+#include "../../include/heightinfo2.h"
 
 /**
  * @brief This function is called whenever a new connection is opened.
@@ -49,7 +49,7 @@ void onmessage(ws_cli_conn_t client,
     if (sscanf((const char*)msg, "%d,%d,%d,%d", &startX, &startY, &targetX, &targetY) == 4) {
         printf("Received coordinates: start(%d,%d) target(%d,%d)\n", startX, startY, targetX, targetY);
         
-        Grid* grid = createGrid(listgorareCols, listgorareRows, listgorare());
+        Grid* grid = createGrid(WIDTH, HEIGHT, listgorare2());
         printf("Created grid");
         Node** path = findPath(grid, startX, startY, targetX, targetY);
         printf("Created foundPath done");
