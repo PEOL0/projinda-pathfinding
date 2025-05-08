@@ -76,8 +76,8 @@ function createRoute() {
     
     let coords = [];
     for (let i = 0; i < waypoints.length; i++) {
-        coords.push(Math.round(waypoints[i][0]/2));
-        coords.push(Math.round(waypoints[i][1]/2));
+        coords.push(Math.round(waypoints[i][0]));
+        coords.push(Math.round(waypoints[i][1]));
     }
     
     let message = coords.join(',');
@@ -126,7 +126,7 @@ function processAndDraw(input) {
         let y = parseFloat(yStr);
   
         if (!isNaN(x) && !isNaN(y)) {
-            rita(2*x, 2*y);
+            rita(x, y);
         }
     }
 }
