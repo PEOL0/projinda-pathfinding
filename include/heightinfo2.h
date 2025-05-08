@@ -13,7 +13,8 @@ void loadPGM(const char *filename, float **image) {
         printf("Current working dir: %s\n", cwd);
     }
 
-    if (access("test.pgm", F_OK) != 0) {
+    // Check if the specified file exists, not just "test.pgm"
+    if (access(filename, F_OK) != 0) {
         perror("File does not exist at expected location \n");
         exit(1);
     }
@@ -23,7 +24,7 @@ void loadPGM(const char *filename, float **image) {
     printf("File exists \n");
 
     if (!f) {
-        fprintf(stderr, "Failed to open filennn '%s'\n", filename);
+        fprintf(stderr, "Failed to open file '%s'\n", filename);
         perror("Reason");
         exit(1);
     }
@@ -51,7 +52,8 @@ void loadPGM(const char *filename, float **image) {
         exit(1);
     }
 
-    float *buffer = (float *)malloc(WIDTH * HEIGHT);
+    // Correct allocation for a buffer of unsigned char values
+    unsigned char *buffer = (unsigned char *)malloc(WIDTH * HEIGHT * sizeof(unsigned char));
     if (!buffer) {
         perror("Failed to allocate buffer");
         fclose(f);
@@ -61,7 +63,8 @@ void loadPGM(const char *filename, float **image) {
     size_t bytesRead = fread(buffer, sizeof(unsigned char), WIDTH * HEIGHT, f);
     fclose(f);
     if (bytesRead != WIDTH * HEIGHT) {
-        fprintf(stderr, "Failed to read full image.\n");
+        fprintf(stderr, "Failed to read full image. Read %zu bytes, expected %d.\n", 
+                bytesRead, WIDTH * HEIGHT);
         free(buffer);
         exit(1);
     }
