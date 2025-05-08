@@ -1,4 +1,5 @@
 console.log("JS scriptad");
+const socket = new WebSocket('ws://localhost:8080');
 
 function createMap() {
     const selectedArea = document.getElementById('areaSelect').value;
@@ -25,7 +26,7 @@ const area = getQueryParam("area");
 
 // Backgrounds - can be colors or image URLs
 const backgrounds = {
-    "Berga": "url('assets/bergaKarta.png')"
+    "Berga": "url('assets/helluheightInfoBILD.png')"
 }
 
 const bg = backgrounds[area];
@@ -40,11 +41,14 @@ if (bg) {
 
 
 const klickArea = document.getElementById('klickArea');
-const start = [0, 0];
-const slut = [0, 0];
 
+let waypoints = [];
 
 klickArea.addEventListener('click', function(event) {
+    if (event.target.tagName === 'BUTTON' || event.target.closest('button')) {
+        return; 
+    }
+    
     const rect = klickArea.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
@@ -56,28 +60,89 @@ klickArea.addEventListener('click', function(event) {
     marker.className = 'marker';
     marker.style.left = x + 'px';
     marker.style.top = y + 'px';
-    if (klickArea.childElementCount <=1) {
-        klickArea.appendChild(marker);
-        start[0] = x;
-        start[1] = y;
-    } else if (klickArea.childElementCount <=2) {
-        klickArea.appendChild(marker);
-        slut[0] = x;
-        slut[1] = y;
-    }
-    console.log(start[0], start[1], slut[0], slut[1]);
+
+    klickArea.appendChild(marker);
+    
+    waypoints.push([x, y]);
+    
+    console.log(`Added waypoint ${waypoints.length}: ${x}, ${y}`);
 });
 
 function createRoute() {
-    // Skicka koordiinater till Algoritm
-    console.log(`KLICKAT PÅ CREATE ROTE KNAPP ${start},${slut}`);
+    if (waypoints.length < 2) {
+        alert('Please select at least 2 points for a route');
+        return;
+    }
+    
+    console.log(`Creating route with ${waypoints.length} waypoints`);
+    
+    let coords = [];
+    for (let i = 0; i < waypoints.length; i++) {
+        coords.push(Math.round(waypoints[i][0]));
+        coords.push(Math.round(waypoints[i][1]));
+    }
+    
+    let message = coords.join(',');
+    console.log(`Sending coordinates: ${message}`);
+    
+    socket.send(message);
 }
+
+function clearRoute() {
+    const markers = document.querySelectorAll('.marker, .markerVag');
+    markers.forEach(marker => marker.remove());
+    waypoints = []; 
+    console.log('Route cleared');
+}
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'c' || event.key === 'C') {
+        clearRoute();
+    }
+});
 
 function rita(x, y) {
     const markerVag = document.createElement('div');
     markerVag.className = 'markerVag';
     markerVag.style.left = x + 'px';
     markerVag.style.top = y + 'px';
-    klickArea.appendChild(marker);
 
+    klickArea.appendChild(markerVag);
+}
+
+socket.onopen = function () {
+    console.log("Socket connected");
+}
+
+function processAndDraw(input) {
+    const pathMarkers = document.querySelectorAll('.markerVag');
+    pathMarkers.forEach(marker => marker.remove());
+    
+    let points = input.split(";"); 
+  
+    while (points.length > 0) {
+        let pair = points.shift(); 
+        if (!pair) continue;
+  
+        let [xStr, yStr] = pair.split(","); 
+        let x = parseFloat(xStr);
+        let y = parseFloat(yStr);
+  
+        if (!isNaN(x) && !isNaN(y)) {
+            rita(x, y);
+        }
+    }
+}
+
+socket.onmessage = function (message) {
+    console.log(message);
+    
+    // Check if the message starts with "error"
+    if (message.data.toString().toLowerCase().startsWith('no')) {
+        clearRoute();
+        alert(message.data);
+        return;
+    }
+    
+    processAndDraw(message.data);
 }
