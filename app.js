@@ -25,7 +25,7 @@ const area = getQueryParam("area");
 
 // Backgrounds - can be colors or image URLs
 const backgrounds = {
-    "SKOG nr 1": "url('assets/bergaKarta.png')"
+    "Berga": "url('assets/bergaKarta.png')"
 }
 
 const bg = backgrounds[area];
