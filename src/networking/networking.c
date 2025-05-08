@@ -7,6 +7,7 @@
 #include <wsserver/ws.h>
 #include "pathfinding.h"
 #include "heightinfo.h"
+#include "heightinfo2.h"
 
 /**
  * @brief This function is called whenever a new connection is opened.
@@ -83,7 +84,7 @@ void onmessage(ws_cli_conn_t client,
 
     printf("Parsed coordinates \n");
    
-    Grid* grid = createGrid(listgorareCols, listgorareRows, listgorare());
+    Grid* grid = createGrid(listgorareCols, listgorareRows, listgorare2());
     printf("Created grid\n");
     
     // Create target list with the coordCount points

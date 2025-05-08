@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-const int listgorareCols = 725;
-const int listgorareRows = 370;
+const int listgorareCols = 1000;
+const int listgorareRows = 1000;
 
 float** listgorare() {
     float **heightinfo = (float **)malloc(listgorareCols * sizeof(float *));
