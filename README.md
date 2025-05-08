@@ -8,7 +8,7 @@ Detta projekt har som syfte att underlätta vägval för orienterare och andra k
 Vi använder en sökalgoritm vid namn A* (A-star). Denna algoritm kombinerar två värden, det första värdet är kostnaden mellan startnoden och ens nuvarande position, och det andra värdet är det potentiella kostnaden mellan ens nuvarande position och slutnoden
 
 ### Exempel A*
-![A* gif](https://upload.wikimedia.org/wikipedia/commons/9/98/Astar_progress_animation.gif)
+[![A* gif](https://sv.wikipedia.org/wiki/A*_S%C3%B6kalgoritm#/media/Fil:Astar_progress_animation.gif)](tps://sv.wikipedia.org/wiki/A*_S%C3%B6kalgoritm#/media/Fil:Astar_progress_animation.gif)
 
 [Mer om A*-algoritmen på Wikipedia](https://sv.wikipedia.org/wiki/A*_S%C3%B6kalgoritm)
 
