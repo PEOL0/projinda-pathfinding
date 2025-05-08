@@ -13,6 +13,12 @@ TARGET = build/server
 # Default target
 all: $(TARGET)
 
+# Create build directory
+$(TARGET): | build
+
+build:
+	mkdir -p build
+
 # Rule to build the executable
 $(TARGET): $(OBJ) $(PATHFINDING_OBJ)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
