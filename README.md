@@ -48,7 +48,7 @@ Vi är medvetna om vissa buggar som finns i detta projekt, och ämnar att lösa 
 
 ### Buggar
 - Problem med olika skärmstorlekar. Skärm större/mindre än bilden ibland
-- ~~Man kan inte klicka längst ut på kanterna~~
+
 ### TODOs
 - Lägga till fler områden att välja kartor från 
 - Linea upp en terrängkarta över området med den faktiska höjdkartan för att underlätta användarvänligheten
